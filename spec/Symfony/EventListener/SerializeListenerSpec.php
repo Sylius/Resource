@@ -56,35 +56,7 @@ final class SerializeListenerSpec extends ObjectBehavior
 
         $request->getRequestFormat()->willReturn('json');
 
-        $serializer->serialize($data, 'json', [])->willReturn('serialized_data')->shouldBeCalled();
-
-        $this->onKernelView($event);
-
-        Assert::eq($event->getControllerResult(), 'serialized_data');
-    }
-
-    function it_serializes_data_to_the_requested_format_with_normalization_context(
-        HttpKernelInterface $kernel,
-        Request $request,
-        \stdClass $data,
-        HttpOperationInitiatorInterface $operationInitiator,
-        HttpOperation $operation,
-        SerializerInterface $serializer,
-    ): void {
-        $event = new ViewEvent(
-            $kernel->getWrappedObject(),
-            $request->getWrappedObject(),
-            HttpKernelInterface::MAIN_REQUEST,
-            $data->getWrappedObject(),
-        );
-
-        $operationInitiator->initializeOperation($request)->willReturn($operation);
-
-        $request->getRequestFormat()->willReturn('json');
-
-        $operation->getNormalizationContext()->willReturn(['groups' => ['dummy:read']]);
-
-        $serializer->serialize($data, 'json', ['groups' => ['dummy:read']])->willReturn('serialized_data')->shouldBeCalled();
+        $serializer->serialize($data, 'json')->willReturn('serialized_data')->shouldBeCalled();
 
         $this->onKernelView($event);
 
@@ -135,7 +107,7 @@ final class SerializeListenerSpec extends ObjectBehavior
 
         $request->getRequestFormat()->willReturn('html');
 
-        $serializer->serialize($data, 'json', [])->willReturn('serialized_data')->shouldNotBeCalled();
+        $serializer->serialize($data, 'json')->willReturn('serialized_data')->shouldNotBeCalled();
 
         $this->onKernelView($event);
 
@@ -161,7 +133,7 @@ final class SerializeListenerSpec extends ObjectBehavior
 
         $operationInitiator->initializeOperation($request)->willReturn($operation);
 
-        $request->getRequestFormat()->willReturn('json', []);
+        $request->getRequestFormat()->willReturn('json');
 
         $serializer->serialize($data, 'json')->willReturn('serialized_data')->shouldNotBeCalled();
 

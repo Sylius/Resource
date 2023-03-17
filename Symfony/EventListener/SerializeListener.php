@@ -13,40 +13,42 @@ declare(strict_types=1);
 
 namespace Sylius\Component\Resource\Symfony\EventListener;
 
-use Sylius\Component\Resource\Context\Initiator\RequestContextInitiatorInterface;
 use Sylius\Component\Resource\Metadata\Operation\HttpOperationInitiatorInterface;
-use Sylius\Component\Resource\State\ResponderInterface;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\ViewEvent;
-use Webmozart\Assert\Assert;
+use Symfony\Component\Serializer\SerializerInterface;
 
-final class RespondListener
+final class SerializeListener
 {
     public function __construct(
         private HttpOperationInitiatorInterface $operationInitiator,
-        private RequestContextInitiatorInterface $contextInitiator,
-        private ResponderInterface $responder,
+        private ?SerializerInterface $serializer,
     ) {
     }
 
+    /**
+     * Serializes the data to the requested format.
+     */
     public function onKernelView(ViewEvent $event): void
     {
         $request = $event->getRequest();
-        $context = $this->contextInitiator->initializeContext($request);
         $operation = $this->operationInitiator->initializeOperation($request);
 
-        $controllerResult = $event->getControllerResult();
+        /** @var string $format */
+        $format = $request->getRequestFormat();
 
         if (
             null === $operation ||
-            $controllerResult instanceof Response
+            'html' === $format
         ) {
             return;
         }
 
-        $response = $this->responder->respond($controllerResult, $operation, $context);
-        Assert::isInstanceOf($response, Response::class);
+        if (null === $this->serializer) {
+            throw new \LogicException(sprintf('You can not use the "%s" format if the Serializer is not available. Try running "composer require symfony/serializer".', $format));
+        }
 
-        $event->setResponse($response);
+        $controllerResult = $event->getControllerResult();
+
+        $event->setControllerResult($this->serializer->serialize($controllerResult, $format));
     }
 }
