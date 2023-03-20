@@ -15,7 +15,7 @@ namespace Sylius\Component\Resource\Tests\Dummy;
 
 use Sylius\Component\Resource\Metadata\Resource;
 
-#[Resource]
-final class DummyResource
+#[Resource(alias: 'app.dummy')]
+final class DummyResourceWithAlias
 {
 }
