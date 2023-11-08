@@ -11,15 +11,15 @@
 
 declare(strict_types=1);
 
-namespace Sylius\Component\Resource\Factory;
+namespace Sylius\Resource\Factory;
 
-class_exists(\Sylius\Resource\Factory\Factory::class);
-
-if (false) {
+/**
+ * @template T of object
+ */
+interface TranslatableFactoryInterface extends FactoryInterface
+{
     /**
-     * @inheritDoc
+     * @return T
      */
-    final class Factory extends \Sylius\Resource\Factory\Factory
-    {
-    }
+    public function createNew();
 }
