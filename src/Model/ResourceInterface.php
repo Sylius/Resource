@@ -11,12 +11,12 @@
 
 declare(strict_types=1);
 
-namespace Sylius\Component\Resource\Model;
+namespace Sylius\Resource\Model;
 
-interface_exists(\Sylius\Resource\Model\TranslationInterface::class);
-
-if (false) {
-    interface TranslationInterface extends \Sylius\Resource\Model\TranslationInterface
-    {
-    }
+interface ResourceInterface
+{
+    /** @psalm-suppress MissingReturnType */
+    public function getId();
 }
+
+class_alias(ResourceInterface::class, \Sylius\Component\Resource\Model\ResourceInterface::class);
